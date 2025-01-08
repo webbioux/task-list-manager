@@ -4,7 +4,7 @@ A static web application for managing task lists and storing the data in the bro
 Built with React and Vite.
 
 ## Development
- run dev - Starts development server
+ npm run dev - Starts development server
 
 ## Build
- run build - Builds for production
+ npm run build - Builds for production
