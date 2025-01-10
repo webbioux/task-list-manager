@@ -1,3 +1,7 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTrashCan } from '@fortawesome/free-solid-svg-icons'
+import styles from './DeleteButton.module.sass'
+
 const DeleteButton = ({ onDelete, itemType }) => {
   const handleClick = (e) => {
     e.stopPropagation()
@@ -6,12 +10,12 @@ const DeleteButton = ({ onDelete, itemType }) => {
 
   return (
     <button
-      className="delete-button"
+      className={styles.deleteButton}
       onClick={handleClick}
       aria-label={`Delete ${itemType}`}
       tabIndex="0"
     >
-      Delete
+      <FontAwesomeIcon icon={faTrashCan} aria-hidden="true" className="icon-spacing" />{`Delete ${itemType}`}
     </button>
   )
 }

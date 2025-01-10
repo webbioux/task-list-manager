@@ -1,43 +1,18 @@
-import { useState } from "react"
+import styles from './StatusBadge.module.sass'
 
-const StatusBadge = ({ status, onChange, isListExpanded }) => {
-  const [isOpen, setIsOpen] = useState(false)
-
-  const handleSelect = (newStatus) => {
-    onChange(newStatus)
-    setIsOpen(false)
-  }
-
+const StatusBadge = ({ status, onStatusChange, isListExpanded }) => {
   return (
-    <div className="status-badge" role="region">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        aria-label={`Task status: ${status}`}
-        aria-expanded={isOpen}
-        aria-haspopup="listbox"
-        tabIndex={isListExpanded ? "0" : "-1"}
-      >
-        {status}
-      </button>
-
-      {isOpen && (
-        <div
-          role="listbox"
-          aria-label="Select task status"
-        >
-          {["todo", "doing", "done"].map(option => (
-            <button
-              key={option}
-              onClick={() => handleSelect(option)}
-              role="option"
-              aria-selected={status === option}
-            >
-              {option}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
+    <select
+      className={`status-badge ${styles.statusBadge} ${styles[status]}`}
+      value={status}
+      onChange={(e) => onStatusChange(e.target.value)}
+      aria-label="Task status"
+      tabIndex={isListExpanded ? "0" : "-1"}
+    >
+      <option value="todo">TODO</option>
+      <option value="doing">DOING</option>
+      <option value="done">DONE</option>
+    </select>
   )
 }
 

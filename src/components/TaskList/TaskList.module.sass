@@ -1,1 +1,83 @@
+.taskList
+    background-color: var(--default-bg-color)
+    width: 400px
+    border-radius: 12px
+    padding: 20px
+    color: var(--text-color-black)
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)
+    position: relative
+    z-index: 1
+    cursor: pointer
 
+    &.expanded
+        width: 600px
+        padding: 32px
+        position: fixed
+        z-index: 101
+        top: 50%
+        left: 50%
+        transform: translate(-50%, -50%)
+        max-width: 80%
+        max-height: 80vh
+        overflow-y: auto
+        cursor: default
+
+    .closeButton
+        color: var(--text-color-black)
+        padding: 0 10px
+        background-color: transparent
+        font-size: 30px
+
+.modalOverlay
+    position: fixed
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    background: rgba(0, 0, 0, 0.5)
+    z-index: 100
+
+header
+    form
+        width: 100%
+        input
+            width: 100%
+
+    .listTitle
+        width: 100%
+        height: auto
+        cursor: text
+
+header
+    display: flex
+    align-items: center
+    justify-content: space-between
+    margin-bottom: 20px
+
+    h2
+        margin: 0
+        font-size: 1.5rem
+        color: var(--text-color-black)
+
+.tasks
+    display: flex
+    flex-direction: column
+    gap: 12px
+
+.moreTasks
+    padding-top: 10px
+    font-size: 24px
+    width: 100%
+    display: flex
+    justify-content: center
+    align-items: center
+
+footer
+    margin-top: 20px
+    display: inline-flex
+    justify-content: space-between
+    align-items: center
+    width: fit-content
+
+    &.expanded
+        width: 100%

@@ -1,9 +1,11 @@
+import styles from './Toast.module.sass'
+
 const Toast = ({ message }) => {
   return (
     <div 
       role="alert" 
       aria-live="polite"
-      style={{ position: "fixed", top: "50px", right: "50%" }}
+      className={styles.toast}
     >
       {message}
     </div>

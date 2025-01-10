@@ -2,6 +2,9 @@ import { useState, useEffect } from "react"
 import Task from "../Task/Task"
 import StatusFilter from "./StatusFilter"
 import DeleteButton from "../shared/DeleteButton"
+import styles from './TaskList.module.sass'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEllipsis, faPlus, faXmark } from '@fortawesome/free-solid-svg-icons'
 
 const TaskList = ({ id, name, tasks, onDelete, onUpdateName, onAddTask, onUpdateTask, onDeleteTask }) => {
   // Default state for TaskList is "overview" showing only number of tasks specified in numberOfVisibleTasksInOverview.
@@ -11,7 +14,9 @@ const TaskList = ({ id, name, tasks, onDelete, onUpdateName, onAddTask, onUpdate
   const [currentStatusFilter, setCurrentStatusFilter] = useState("all")
   const [listName, setListName] = useState(name)
   // Number of tasks shown when the list is not expanded
-  const numberOfVisibleTasksInOverview = 3
+  const numberOfVisibleTasksInOverview = 8
+  const filteredTasks = tasks.filter(task => currentStatusFilter === "all" || task.status === currentStatusFilter)
+  const visibleTasks = filteredTasks.slice(0, isExpanded ? undefined : numberOfVisibleTasksInOverview)
 
   useEffect(() => {
     if (!isExpanded) {
@@ -20,14 +25,14 @@ const TaskList = ({ id, name, tasks, onDelete, onUpdateName, onAddTask, onUpdate
   }, [isExpanded])
   
   const handleListClick = (e) => {
-    if (!e.target.closest(".task") && !isExpanded) {
+    // console.log("Clicked element class:", e.target)
+    if (e.target.closest('.icon-ellipsis')) {
+      setIsExpanded(true)
+    }
+    else if ((e.target.className.includes('task-list') || e.target.className === 'task-list-content') && !isExpanded) {
       setIsExpanded(true)
     }
   }
-
-  const visibleTasks = tasks
-    .filter(task => currentStatusFilter === "all" || task.status === currentStatusFilter)
-    .sort((a, b) => a.status === "done" ? 1 : b.status === "done" ? -1 : 0)
 
   const handleNameClick = (e) => {
     e.stopPropagation()
@@ -47,52 +52,36 @@ const TaskList = ({ id, name, tasks, onDelete, onUpdateName, onAddTask, onUpdate
     if (e.key === 'Escape' && isExpanded) {
       setIsExpanded(false)
     }
-    if (e.key === 'Enter' && !isExpanded) {
+      if (e.key === 'Enter' && !isExpanded && e.target.className.includes('task-list')) {
       setIsExpanded(true)
     }
   }
 
+  const handleAddTask = () => {
+    if (tasks.length >= numberOfVisibleTasksInOverview) {
+      setIsExpanded(true)
+    }
+    onAddTask(id)
+  }
 
   return (
     <>
       {isExpanded && (
-        <div 
-          className="modal-overlay"
+        <div
+          className={styles.modalOverlay}
           onClick={() => setIsExpanded(false)}
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0, 0, 0, 0.5)',   
-            zIndex: 100
-          }}
-        />  
+        />
       )}
-      <div 
-        className={`task-list ${isExpanded ? "expanded" : ""}`}
+      <div
+        className={`task-list ${styles.taskList} ${isExpanded ? styles.expanded : ""}`}
         onClick={handleListClick}
         data-list-id={id}
         aria-label={`Task list: ${name}`}
         aria-expanded={isExpanded}
         onKeyDown={handleKeyDown}
         tabIndex="0"
-        style={{
-          position: isExpanded ? 'fixed' : 'relative',  
-          zIndex: isExpanded ? 101 : 1,
-          background: 'white',
-          ...(isExpanded && {
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            maxWidth: '80%',
-            maxHeight: '80vh',  
-            overflowY: 'auto'
-          })
-        }}
       >
-        <div aria-hidden={!isExpanded}>
+        <div className="task-list-content" aria-hidden={!isExpanded}>
           <header>
             {editingName ? (
               <form onSubmit={handleNameSubmit}>
@@ -107,19 +96,19 @@ const TaskList = ({ id, name, tasks, onDelete, onUpdateName, onAddTask, onUpdate
                 />
               </form>
             ) : (
-                <h2 onClick={handleNameClick}
-                  style={{
-                    width: '200px',
-                    height: '50px',
-                  }}>{name}</h2>  
+                <h2
+                  onClick={handleNameClick}
+                  className={styles.listTitle}
+                >{name}</h2> 
             )}
             {isExpanded && (
               <>
                 <StatusFilter value={currentStatusFilter} onChange={setCurrentStatusFilter} />
                 <button
+                  className={styles.closeButton}
                   onClick={() => setIsExpanded(false)}
                   aria-label="Close task list"
-                >Close</button>
+                ><FontAwesomeIcon icon={faXmark} aria-hidden="true" /></button>
               </>
             )}
           </header>
@@ -129,7 +118,7 @@ const TaskList = ({ id, name, tasks, onDelete, onUpdateName, onAddTask, onUpdate
             aria-label="Tasks"
             aria-live="polite"  
             className="tasks">
-            {visibleTasks.slice(0, isExpanded ? undefined : numberOfVisibleTasksInOverview).map(task => (
+            {visibleTasks.map(task => (
               <Task
                 key={task.id}
                 {...task}
@@ -140,14 +129,19 @@ const TaskList = ({ id, name, tasks, onDelete, onUpdateName, onAddTask, onUpdate
             ))}
           </div>
           
-          {!isExpanded && tasks.length > numberOfVisibleTasksInOverview && <div>...</div>}
+          {!isExpanded && tasks.length > numberOfVisibleTasksInOverview &&
+            <div className={styles.moreTasks}>
+              <FontAwesomeIcon icon={faEllipsis} className="icon-ellipsis" />
+            </div>
+          }
           
-          <footer>  
+          <footer className={isExpanded ? styles.expanded : ""}>  
             <button
-              onClick={() => onAddTask(id)}
+              onClick={handleAddTask}
               aria-label={`Add new task to ${name}`}
               tabIndex={isExpanded ? "0" : "-1"}
-            >Add Task</button>
+            >
+              <FontAwesomeIcon icon={faPlus} aria-hidden="true" className="icon-spacing" /> Add task</button>
             {isExpanded && <DeleteButton onDelete={() => onDelete(id, name)} itemType="task list" />}
           </footer>
         </div>
