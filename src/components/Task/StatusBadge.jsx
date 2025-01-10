@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-const StatusBadge = ({ status, onChange }) => {
+const StatusBadge = ({ status, onChange, isListExpanded }) => {
   const [isOpen, setIsOpen] = useState(false)
 
   const handleSelect = (newStatus) => {
@@ -15,6 +15,7 @@ const StatusBadge = ({ status, onChange }) => {
         aria-label={`Task status: ${status}`}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
+        tabIndex={isListExpanded ? "0" : "-1"}
       >
         {status}
       </button>

@@ -9,6 +9,7 @@ const DeleteButton = ({ onDelete, itemType }) => {
       className="delete-button"
       onClick={handleClick}
       aria-label={`Delete ${itemType}`}
+      tabIndex="0"
     >
       Delete
     </button>

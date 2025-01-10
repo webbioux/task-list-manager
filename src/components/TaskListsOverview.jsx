@@ -1,11 +1,17 @@
-import { useState } from "react"
 import TaskList from "./TaskList/TaskList"
 
 const TaskListsOverview = ({ taskLists, onAddList, onDeleteList, onUpdateListName, onAddTask, onUpdateTask, onDeleteTask }) => {
     return (
         <main>
-            <h1>Task List Manager</h1>
-            <div role="region" aria-label="Task Lists">
+            <header role="banner">
+                <h1>Task List Manager</h1>
+            </header>
+            <button
+                onClick={() => onAddList()}
+                aria-label="Create a new task list"
+                className="sr-only"
+            >Add List</button>  
+            <div role="main" aria-label="Task Lists">
                 {taskLists.map(list => (
                     <TaskList
                         key={list.id}
@@ -18,7 +24,10 @@ const TaskListsOverview = ({ taskLists, onAddList, onDeleteList, onUpdateListNam
                     />
                 ))}
             </div>
-            <button onClick={() => onAddList()} aria-label="Create new task list">Add List</button>
+            <button
+                onClick={() => onAddList()}
+                aria-label="Create a new task list"
+            >Add List</button>
         </main>
     )
 }

@@ -43,6 +43,16 @@ const TaskList = ({ id, name, tasks, onDelete, onUpdateName, onAddTask, onUpdate
     }
   }
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape' && isExpanded) {
+      setIsExpanded(false)
+    }
+    if (e.key === 'Enter' && !isExpanded) {
+      setIsExpanded(true)
+    }
+  }
+
+
   return (
     <>
       {isExpanded && (
@@ -55,19 +65,21 @@ const TaskList = ({ id, name, tasks, onDelete, onUpdateName, onAddTask, onUpdate
             left: 0,
             right: 0,
             bottom: 0,
-            background: 'rgba(0, 0, 0, 0.5)',
+            background: 'rgba(0, 0, 0, 0.5)',   
             zIndex: 100
           }}
-        />
+        />  
       )}
       <div 
         className={`task-list ${isExpanded ? "expanded" : ""}`}
         onClick={handleListClick}
         data-list-id={id}
-        role="region"
         aria-label={`Task list: ${name}`}
+        aria-expanded={isExpanded}
+        onKeyDown={handleKeyDown}
+        tabIndex="0"
         style={{
-          position: isExpanded ? 'fixed' : 'relative',
+          position: isExpanded ? 'fixed' : 'relative',  
           zIndex: isExpanded ? 101 : 1,
           background: 'white',
           ...(isExpanded && {
@@ -75,62 +87,70 @@ const TaskList = ({ id, name, tasks, onDelete, onUpdateName, onAddTask, onUpdate
             left: '50%',
             transform: 'translate(-50%, -50%)',
             maxWidth: '80%',
-            maxHeight: '80vh',
+            maxHeight: '80vh',  
             overflowY: 'auto'
           })
         }}
       >
-        <header>
-          {editingName ? (
-            <form onSubmit={handleNameSubmit}>
-              <input
-                type="text"
-                value={listName}
-                onChange={(e) => setListName(e.target.value)}
-                onBlur={handleNameSubmit}
-                placeholder="New task list name"
-                aria-label="New task list name"
-                autoFocus
+        <div aria-hidden={!isExpanded}>
+          <header>
+            {editingName ? (
+              <form onSubmit={handleNameSubmit}>
+                <input
+                  type="text"
+                  value={listName}
+                  onChange={(e) => setListName(e.target.value)}
+                  onBlur={handleNameSubmit}
+                  placeholder="New task list name"
+                  aria-label="New task list name"
+                  autoFocus
+                />
+              </form>
+            ) : (
+                <h2 onClick={handleNameClick}
+                  style={{
+                    width: '200px',
+                    height: '50px',
+                  }}>{name}</h2>  
+            )}
+            {isExpanded && (
+              <>
+                <StatusFilter value={currentStatusFilter} onChange={setCurrentStatusFilter} />
+                <button
+                  onClick={() => setIsExpanded(false)}
+                  aria-label="Close task list"
+                >Close</button>
+              </>
+            )}
+          </header>
+          
+          <div
+            role="list"
+            aria-label="Tasks"
+            aria-live="polite"  
+            className="tasks">
+            {visibleTasks.slice(0, isExpanded ? undefined : numberOfVisibleTasksInOverview).map(task => (
+              <Task
+                key={task.id}
+                {...task}
+                isListExpanded={isExpanded}
+                onUpdate={(updates) => onUpdateTask(id, task.id, updates)}
+                onDelete={() => onDeleteTask(id, task.id, task.description, name)}
               />
-            </form>
-          ) : (
-              <h2 onClick={handleNameClick}
-                style={{
-                  width: '200px',
-                  height: '50px',
-                }}>{name}</h2>
-          )}
-          {isExpanded && (
-            <>
-              <StatusFilter value={currentStatusFilter} onChange={setCurrentStatusFilter} />
-              <button
-                onClick={() => setIsExpanded(false)}
-                aria-label="Close task list"
-              >Close</button>
-            </>
-          )}
-        </header>
-
-        <div role="list" className="tasks">
-          {visibleTasks.slice(0, isExpanded ? undefined : numberOfVisibleTasksInOverview).map(task => (
-            <Task
-              key={task.id}
-              {...task}
-              onUpdate={(updates) => onUpdateTask(id, task.id, updates)}
-              onDelete={() => onDeleteTask(id, task.id, task.description, name)}
-            />
-          ))}
+            ))}
+          </div>
+          
+          {!isExpanded && tasks.length > numberOfVisibleTasksInOverview && <div>...</div>}
+          
+          <footer>  
+            <button
+              onClick={() => onAddTask(id)}
+              aria-label={`Add new task to ${name}`}
+              tabIndex={isExpanded ? "0" : "-1"}
+            >Add Task</button>
+            {isExpanded && <DeleteButton onDelete={() => onDelete(id, name)} itemType="task list" />}
+          </footer>
         </div>
-        
-        {!isExpanded && tasks.length > numberOfVisibleTasksInOverview && <div>...</div>}
-
-        <footer>
-          <button
-            onClick={() => onAddTask(id)}
-            aria-label={`Add new task to ${name}`}
-          >Add Task</button>
-          {isExpanded && <DeleteButton onDelete={() => onDelete(id, name)} itemType="task list" />}
-        </footer>
       </div>
     </>
   )
