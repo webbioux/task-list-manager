@@ -25,11 +25,17 @@ const TaskList = ({ id, name, tasks, onDelete, onUpdateName, onAddTask, onUpdate
   }, [isExpanded])
   
   const handleListClick = (e) => {
-    // console.log("Clicked element class:", e.target)
+    // console.log("Clicked element class:", e.target.className)
     if (e.target.closest('.icon-ellipsis')) {
       setIsExpanded(true)
     }
-    else if ((e.target.className.includes('task-list') || e.target.className === 'task-list-content') && !isExpanded) {
+    else if (
+      (typeof e.target?.className === 'string' &&
+        (e.target.className.includes('task-list') ||
+          e.target.className.includes('moreTasks') ||
+          e.target.className === 'task-list-content')) &&
+      !isExpanded
+    ) {
       setIsExpanded(true)
     }
   }

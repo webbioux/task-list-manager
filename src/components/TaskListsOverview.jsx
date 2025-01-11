@@ -6,7 +6,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 const TaskListsOverview = ({ taskLists, onAddList, onDeleteList, onUpdateListName, onAddTask, onUpdateTask, onDeleteTask }) => {
     return (
         <main>
-            <header role="banner">
+            <header role="banner" className={styles.header}>
                 <h1>Task List Manager</h1>
             </header>
             <button
