@@ -6,5 +6,8 @@ Built with React and Vite.
 ## Development
  npm run dev - Starts development server
 
+## Test
+ npm run test - Run tests
+ 
 ## Build
  npm run build - Builds for production
