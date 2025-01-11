@@ -1,3 +1,4 @@
+import React from 'react'
 import styles from './DialogBox.module.sass'
 import { useEffect, useRef } from 'react'
 
